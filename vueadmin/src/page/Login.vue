@@ -47,7 +47,7 @@
             if(location.href.indexOf("#reloaded")==-1){
                 location.href=location.href+"#reloaded";
                 location.reload();
-            }            
+            }
             let key = window.localStorage.getItem('key');
             if(key){
                 this.$router.push('/page/dashboard');
@@ -67,9 +67,15 @@
                                 window.sessionStorage.clear();
                                 window.localStorage.setItem('key',res.data.auth_key);
                                 window.localStorage.setItem('userInfo',JSON.stringify(res.data));
-                                this.set_url(res.extend);                               
+                                this.set_url(res.extend);
+                            }else {
+                                this.$message({
+                                    showClose: true,
+                                    message: res.msg,
+                                    type: 'error'
+                                });
+                                this.ifload = false;
                             }
-                            this.ifload = false;
 
                         })
                     } else {
@@ -82,7 +88,7 @@
             set_url(data){
                 let rules = data.rules;
                 store.dispatch('GenerateRoutes',rules).then(() => {
-                    this.$router.addRoutes(store.getters.addRouters) 
+                    this.$router.addRoutes(store.getters.addRouters)
                     localStorage.setItem('rules', JSON.stringify(rules))
                     this.$router.push('/page/dashboard');
                 });
@@ -99,7 +105,8 @@
         position: relative;
         width:100%;
         height:100%;
-        background-image: url(../assets/login-bg.jpg);
+        /*background-image: url(../assets/login-bg.jpg);*/
+        background-image: url(https://wsoss.wushuai.online/2020-09/5b0f669ee7bce736590a798a_1601466714783.png);
         background-size: 100%;
     }
     .ms-title{

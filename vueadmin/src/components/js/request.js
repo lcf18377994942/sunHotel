@@ -1,13 +1,13 @@
-import axios from 'axios'
+import axios from 'axios';
 
 //接口域名
-var postUrl = 'http://shopfx.admin.com/v1/'; //tinakj
-export let baseUrl  = 'http://shopfx.admin.com/v1/';
+var postUrl = 'http://sunHotel.com/v1/'; //tinakj
+export let baseUrl  = 'http://sunHotel.com/v1/';
 
 export function post_(url,data,callback){
 
-    data.auth_key = localStorage.getItem('key')?localStorage.getItem('key'):''
-    var qs = require("querystring")
+    data.auth_key = localStorage.getItem('key')?localStorage.getItem('key'):'';
+    var qs = require("querystring");
     data = qs.stringify(data);
     // console.log(data);
     axios.post(postUrl+url,data)
@@ -47,7 +47,7 @@ export function ajax_upload(url,params,act)
 
 export function download(url) {
 
-    var iframe =document.createElement("iframe")
+    var iframe = document.createElement("iframe");
 
     iframe.style.display ="none";
 
