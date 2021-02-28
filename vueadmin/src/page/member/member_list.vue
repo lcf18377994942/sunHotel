@@ -50,8 +50,7 @@
 				<el-table-column
 					prop="member_avatar"
 					label="头像"
-                    align="center"
-					width="80">
+                    align="center">
 					<template slot-scope="scope">
 						<img :src="scope.row.member_avatar?scope.row.member_avatar:avatarDefault" style="width:48px;border-radius: 50%;"/>
                     </template>
@@ -60,39 +59,61 @@
 				<el-table-column
 					prop="member_id"
 					label="会员ID"
-                    align="center"
-					width="80">
+                    align="center">
 				</el-table-column>
 				<el-table-column
 					prop="member_name"
                     align="center"
-					label="会员姓名"
-					width="80">
+					label="会员姓名">
 				</el-table-column>
+                <el-table-column
+                    prop="sex"
+                    align="center"
+                    label="性别">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.sex=='1'?'男':'女'}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="member_card_id"
+                    align="center"
+                    label="身份证号">
+                </el-table-column>
 				<el-table-column
 					prop="member_mobile"
                     align="center"
-					label="会员电话"
-					width="120">
+					label="会员电话">
 				</el-table-column>
+                <el-table-column
+                    prop="member_type_name"
+                    align="center"
+                    label="会员等级"
+                    width="120">
+                </el-table-column>
 				<el-table-column
 					prop="state"
                     align="center"
-					label="状态"
-					width="80">
+					label="状态">
 					<template slot-scope="scope">
-						<span>{{scope.row.state?'正常':'冻结'}}</span>
+						<span>{{scope.row.state=='1'?'正常':'冻结'}}</span>
                     </template>
 				</el-table-column>
 				<el-table-column
 					prop="create_time"
                     align="center"
-					label="注册时间"
-					width="180">
+					label="注册时间">
 					<template slot-scope="scope">
 						<span>{{scope.row.create_time*1000 | formatDate}}</span>
 					</template>
 				</el-table-column>
+                <el-table-column
+                    prop="update_time"
+                    align="center"
+                    label="修改时间">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.update_time*1000 | formatDate}}</span>
+                    </template>
+                </el-table-column>
 				<el-table-column
                     align="center"
 					label="操作">
@@ -108,15 +129,17 @@
 			</el-table>
 
             <div class="pagination">
-                <el-pagination background
-					@current-change="handleCurrentChange"
-					layout="prev, pager, next"
-					:total="pages"
-					:page-size="page_size">
+                <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="page"
+                    :page-sizes="[10, 30, 50, 100]"
+                    :page-size="page_size"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="pages">
                 </el-pagination>
             </div>
 		</div>
-
 
         <!-- 删除提示框 -->
         <el-dialog title="删除提示" :visible.sync="delVisible" width="300px" center>
@@ -142,7 +165,6 @@ export default{
 			page:1,
 			page_size:10,
 			pages:0,
-			stateText:[], //订单状态描述
 
             //当前操作对象
 			curId:0,
@@ -178,11 +200,15 @@ export default{
 				if(res.code=='0'){
 					this.list = res.data;
 					this.pages = Number(res.extend.pages);
-					this.stateText = res.extend.orderState;
 					this.ifload = false;
 				}
 			});
 		},
+        // 分页条数
+        handleSizeChange(val){
+            this.page_size = val;
+            this.getData();
+        },
         // 分页导航
         handleCurrentChange(val) {
             this.page = val;

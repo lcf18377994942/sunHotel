@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 //接口域名
-var postUrl = 'http://sunHotel.com/v1/'; //tinakj
-export let baseUrl  = 'http://sunHotel.com/v1/';
+var postUrl = 'http://sunhotel.admin.com/v1/'; //tinakj
+export let baseUrl  = 'http://sunhotel.admin.com/v1/';
 
 export function post_(url,data,callback){
 

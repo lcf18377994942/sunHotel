@@ -18,7 +18,7 @@ class MemberModel extends BaseModel
     {
         return [
             [['member_name','loginpwd','paypwd','member_mobile'],'required','on'=>'Reg'],
-            [['invite_id', 'create_time', 'update_time','grade'], 'integer'],
+            [['invite_id', 'create_time', 'update_time'], 'integer'],
             [['member_name'], 'string', 'max' => 64],
             [['member_mobile'], 'string', 'max' => 13],
             [['loginpwd', 'paypwd', 'auth_key'], 'string', 'max' => 32],
@@ -41,7 +41,6 @@ class MemberModel extends BaseModel
             'invite_id' => '推荐人',
             'openid' => '微信openid',
             'member_avatar' => '用户头像',
-            'grade' => '用户等级',  
             'state' => '用户状态',  //  1正常 0冻结
             'create_time' => '创建时间',
             'update_time' => '更新时间',
@@ -68,13 +67,12 @@ class MemberModel extends BaseModel
         return self::find()->select($field)->where($where)->asarray()->one();
     }
 
-
     //生成auth_key
     public static function generateAuthKey()
     {
         return Yii::$app->security->generateRandomString();
 
-    }    
+    }
 
     
 }

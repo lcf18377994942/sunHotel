@@ -12,10 +12,10 @@ return [
         ],
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=shopfx_db',
+            'dsn' => 'mysql:host=localhost;dbname=sunhotel_db',
             'username' => 'root',
             'password' => 'root',
             'charset' => 'utf8',
-        ],             
+        ],
     ],
 ];

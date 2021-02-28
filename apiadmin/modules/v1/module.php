@@ -20,6 +20,6 @@ class module extends \yii\base\Module
         
         parent::init();
         
-        // custom initialization code goes here  雁过拔毛
+        // custom initialization code goes here
     } 
 }

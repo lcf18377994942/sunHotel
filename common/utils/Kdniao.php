@@ -11,7 +11,6 @@ class Kdniao
 	private $AppKey = 'xxxxxxxxxxxxxx';
 	private $ReqURL = 'http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx';
 
-
 	//nums  物流单号 
 	//code  快递公司编号 如 SF 
 	public function deliver_search($nums,$code)

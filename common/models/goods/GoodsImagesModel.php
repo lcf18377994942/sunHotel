@@ -36,9 +36,4 @@ class GoodsImagesModel extends BaseModel
             'sort' => '排序',
         ];
     }
-
-
-
-    
-
 }

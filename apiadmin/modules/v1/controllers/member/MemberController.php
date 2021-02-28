@@ -18,13 +18,14 @@ class MemberController extends CoreController
 	{
 		$where  = $this->formartWhere();
 		$params = array(
-			'field'	=> ['member_id','member_name','member_mobile','invite_id','member_avatar','grade','state',
+			'field'	=> ['member_id','member_name','sex','member_card_id','member_mobile','invite_id','member_avatar','member_type_id','state',
 			'create_time','update_time'],
 			'order' => 'member_id desc',
 			'page'	=> $this->request('page','1'),
 			'limit' => $this->request('page_size',10),
 		);
-		$list = Member::MemberList($where,$params);
+        $extends = array('member_type');
+		$list = Member::MemberList($where,$params,$extends);
 		$pages = Member::$pages;
 		$this->out('会员列表',$list,array('pages'=>$pages));
 	}
@@ -53,7 +54,6 @@ class MemberController extends CoreController
 
 		return array('where'=>$where,'whereAnd'=>$whereAnd);
 	}	
-
 
 	/*
 		删除会员
@@ -88,10 +88,8 @@ class MemberController extends CoreController
 		if(!$memberKey = $this->request('member_key')) $this->error('参数错误');
 		$field  = ['member_id','member_name','member_mobile'];
 		$member = Member::queryMember($memberKey,$field);
-		$this->out('会员信息',$member);		
+		$this->out('会员信息',$member);
 	}
-
-
 
 	//会员信息修改
 	public function actionMember_edit()
@@ -114,7 +112,6 @@ class MemberController extends CoreController
 		$this->out('修改成功');
 	}
 
-
 	//会员添加
 	public function actionMember_add()
 	{
@@ -134,7 +131,7 @@ class MemberController extends CoreController
 	{
 		$where  = $this->formartWhere();
 		$params = array(
-			'field'	=> ['member_id','member_name','member_mobile','invite_id','grade','state',
+			'field'	=> ['member_id','member_name','member_mobile','invite_id','state',
 			'create_time','update_time'],
 			'order' => 'member_id desc',
 			'page'	=> $this->request('page','1'),

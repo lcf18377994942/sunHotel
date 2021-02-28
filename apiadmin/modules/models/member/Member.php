@@ -3,6 +3,7 @@
 	会员相关
 */
 namespace apiadmin\modules\models\member;
+use common\models\member\MemberTypeModel;
 use Yii;
 use common\models\member\MemberModel;
 
@@ -24,10 +25,22 @@ class Member extends MemberModel
 		$model  = $models['model'];
 		self::$pages = $models['pages'];
 
-		$data  = $model->asarray()->all();
+		$data  = $model->asArray()->all();
 		if(!$data) return array();
 		//扩展信息
 		if(!$extends) return $data;
+
+        foreach($data as &$val)
+        {
+            foreach($extends as $eType)
+            {
+                //获取分类
+                if($eType=='member_type'){
+                    $type = MemberTypeModel::getMemberTypeById($val['member_type_id']);
+                    $val['member_type_name'] = $type?$type['member_type_name']:'无';
+                }
+            }
+        }
 
 		return $data;
 	}

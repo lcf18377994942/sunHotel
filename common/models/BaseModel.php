@@ -57,7 +57,6 @@ class BaseModel extends \yii\db\ActiveRecord
 		);
 	}	
 
-
 	//返回错误
 	public static function outError($errors)
 	{

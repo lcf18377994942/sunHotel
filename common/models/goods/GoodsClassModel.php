@@ -19,7 +19,7 @@ class GoodsClassModel extends BaseModel
    			[['category_name','desc','index_menu','img'],'string'],
    			[['type_id','parent_id'],'integer'],
    		];
-   	}	
+   	}
 
    	//获取分类树结构
    	public static function getClassTree($pid='0')
