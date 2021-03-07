@@ -54,7 +54,6 @@ class MemberModel extends BaseModel
     {
         if(!$memberId) return false;
         return self::find()->select($field)->where(['member_id' => $memberId])->asarray()->one();
-        return self::findOne(['member_id' => $memberId]);
     }
 
     /*
@@ -71,8 +70,5 @@ class MemberModel extends BaseModel
     public static function generateAuthKey()
     {
         return Yii::$app->security->generateRandomString();
-
     }
-
-    
 }

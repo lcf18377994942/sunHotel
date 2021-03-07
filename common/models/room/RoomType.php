@@ -28,6 +28,10 @@ class RoomType extends BaseModel
         return [
             [['price'], 'number'],
             [['type_name'], 'string', 'max' => 20],
+            [['type_name','price'],'required','on'=>'Reg'],
+            [['type_name'],'unique','on'=>'Reg'],
+            [['type_name','price'],'required','on'=>'Edit'],
+            [['type_name'],'unique','on'=>'Edit'],
         ];
     }
 
@@ -41,5 +45,22 @@ class RoomType extends BaseModel
             'type_name' => '类型名称',
             'price' => '价格',
         ];
+    }
+
+    /*
+        获取所有房间类型
+    */
+    public static function getRoomTypeAll()
+    {
+        return self::find()->select(['type_id','type_name'])->indexBy('type_id')->asArray()->all();
+    }
+
+    /*
+        通过id获取房间类型
+    */
+    public static function getRoomTypeById($typeId,$field=['*'])
+    {
+        if(!$typeId) return false;
+        return self::find()->select($field)->where(['type_id' => $typeId])->asArray()->one();
     }
 }

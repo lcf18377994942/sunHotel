@@ -26,6 +26,8 @@ class RoomState extends BaseModel
     {
         return [
             [['state_name'], 'string', 'max' => 20],
+            [['state_name'],'unique','on'=>'Reg'],
+            [['state_name'],'unique','on'=>'Edit'],
         ];
     }
 
@@ -38,5 +40,22 @@ class RoomState extends BaseModel
             'state_id' => '状态编号',
             'state_name' => '状态名称',
         ];
+    }
+
+    /*
+        获取所有房间状态
+    */
+    public static function getRoomStateAll()
+    {
+        return self::find()->select(['state_id','state_name'])->indexBy('state_id')->asArray()->all();
+    }
+
+    /*
+        通过id获取房间状态
+    */
+    public static function getRoomStateById($stateId,$field=['*'])
+    {
+        if(!$stateId) return false;
+        return self::find()->select($field)->where(['state_id' => $stateId])->asArray()->one();
     }
 }

@@ -4,7 +4,6 @@
 */
 namespace apiadmin\modules\models\member;
 use common\models\member\MemberTypeModel;
-use Yii;
 use common\models\member\MemberModel;
 
 class Member extends MemberModel
@@ -14,7 +13,7 @@ class Member extends MemberModel
 		会员列表显示
 		* whereArr 条件
 		* params 基本参数 包含 field order page limit
-		* extends  扩展信息 一些相关的信息		
+		* extends  扩展信息 一些相关的信息
 	*/
 	public static function MemberList($whereArr,$params,$extends=array())
 	{
