@@ -201,10 +201,6 @@ export default{
 			this.$post_('room/room/room_list',params,(res) => {
 				console.log(res);
 				if(res.code=='0'){
-                    /*this.options = res.data.type;
-                    this.Soptions = res.data.state;
-                    Vue.set(res.data,type,false);
-                    Vue.set(res.data,state,false);*/
                     this.list = res.data;
 					this.pages = Number(res.extend.pages);
 					this.ifload = false;

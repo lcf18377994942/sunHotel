@@ -56,13 +56,19 @@ class Room extends BaseModel
         ];
     }
 
+    //关联sys_role表
+    public function getRoomType()
+    {
+        return $this->hasOne(RoomType::className(), ['type_id' => 'type_id']);
+    }
+
     /*
         通过id获取房间
     */
     public static function getRoomById($roomId,$field=['*'])
     {
         if(!$roomId) return false;
-        return self::find()->select($field)->where(['room_id' => $roomId])->asArray()->one();
+        return self::find()->select($field)->where(['room_id' => $roomId])->leftJoin(RoomType::tableName().' rt','rt.type_id='.Room::tableName().'.type_id')->asArray()->one();
     }
 
     /*
@@ -73,5 +79,21 @@ class Room extends BaseModel
         if(!$RoomKey) return false;
         $where = ['or','room_id='.$RoomKey,'type_id="'.$RoomKey.'"'];
         return self::find()->select($field)->where($where)->asarray()->one();
+    }
+
+    /*
+        获取所有未入住房间
+    */
+    public static function getRoomAll()
+    {
+        return self::find()->select(['room_id','room_name'])->where(['state_id' => RoomState::getRoomStateId()])->asArray()->all();
+    }
+
+    /*
+        修改房间状态
+    */
+    public static function setStateId($id,$stateId)
+    {
+        self::updateAll(['state_id'=>$stateId],['room_id'=>$id]);
     }
 }

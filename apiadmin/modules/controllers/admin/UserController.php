@@ -13,7 +13,9 @@ class UserController extends CoreController
 	//角色列表
 	public function actionList()
 	{
-		$where = ['creater_id'=>$this->_uid];
+        $where = ['status' => 1];
+        if ($this->_uid != 1)
+		    $where = ['creater_id'=>$this->_uid];
 		$list = User::getUserList($where);
 		$roles = Roles::getRoles($this->_user);
 		$roleList = array();

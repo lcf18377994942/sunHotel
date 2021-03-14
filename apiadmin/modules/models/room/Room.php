@@ -30,9 +30,9 @@ class Room extends RoomModel
         //扩展信息
         if(!$extends) return $data;
 
-        $type = RoomType::getRoomTypeAll();
-        $state = RoomState::getRoomStateAll();
-        $floor = RoomFloor::getRoomFloorAll();
+        $type = RoomType::find()->indexBy('type_id')->asArray()->all();
+        $state = RoomState::find()->indexBy('state_id')->asArray()->all();
+        $floor = RoomFloor::find()->indexBy('floor_id')->asArray()->all();
         foreach($data as &$val)
         {
             foreach($extends as $eType)

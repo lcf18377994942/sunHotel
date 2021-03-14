@@ -26,9 +26,10 @@ class Roles extends \yii\db\ActiveRecord
 	//获取角色列表
 	public static function getRoles($user)
 	{
-		$where = ['uid'=>$user['id']];
-		$list = self::find()->where($where)->asarray()->all();
-		return $list;
+        $where = ['status' => 1];
+	    if ($user['id'] != 1)
+            $where = ['uid' => $user['id']];
+        return self::find()->where($where)->asarray()->all();
 	}
 
 

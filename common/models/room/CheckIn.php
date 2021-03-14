@@ -4,7 +4,7 @@ namespace common\models\room;
 use common\models\BaseModel;
 
 /**
- * This is the model class for table "{{%check_in}}".
+ * This is the model class for table "{{%in}}".
  *
  * @property int $check_in_id 入住编号
  * @property int $member_id 会员编号
@@ -34,6 +34,8 @@ class CheckIn extends BaseModel
             [['member_id', 'room_id', 'in_time', 'out_time'], 'integer'],
             [['deposit', 'charge'], 'number'],
             [['mark'], 'string', 'max' => 20],
+            [['member_id','room_id','in_time','out_time','deposit'],'required','on'=>'Reg'],
+            [['member_id','room_id'],'unique','on'=>'Reg'],
         ];
     }
 
@@ -52,5 +54,14 @@ class CheckIn extends BaseModel
             'in_time' => '入住时间',
             'out_time' => '退房时间',
         ];
+    }
+
+    /*
+        通过id获取入住信息
+    */
+    public static function getCheckIdById($Id,$field=['*'])
+    {
+        if(!$Id) return false;
+        return self::find()->select($field)->where(['check_in_id' => $Id])->asArray()->one();
     }
 }

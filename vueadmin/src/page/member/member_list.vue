@@ -85,18 +85,20 @@
 					label="会员电话">
 				</el-table-column>
                 <el-table-column
+                    prop="charge"
+                    align="center"
+                    label="状态">
+                </el-table-column>
+                <el-table-column
                     prop="member_type_name"
                     align="center"
                     label="会员等级"
                     width="120">
                 </el-table-column>
 				<el-table-column
-					prop="state"
+					prop="state_id"
                     align="center"
 					label="状态">
-					<template slot-scope="scope">
-						<span>{{scope.row.state=='1'?'正常':'冻结'}}</span>
-                    </template>
 				</el-table-column>
 				<el-table-column
 					prop="create_time"

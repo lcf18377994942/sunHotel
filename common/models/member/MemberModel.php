@@ -1,5 +1,6 @@
 <?php
 namespace common\models\member;
+use common\models\room\RoomState;
 use Yii;
 use common\models\BaseModel;
 
@@ -17,13 +18,12 @@ class MemberModel extends BaseModel
     public function rules()
     {
         return [
-            [['member_name','loginpwd','paypwd','member_mobile'],'required','on'=>'Reg'],
-            [['invite_id', 'create_time', 'update_time'], 'integer'],
+            [['create_time', 'update_time', 'state_id'], 'integer'],
             [['member_name'], 'string', 'max' => 64],
             [['member_mobile'], 'string', 'max' => 13],
-            [['loginpwd', 'paypwd', 'auth_key'], 'string', 'max' => 32],
             [['openid', 'member_avatar'], 'string', 'max' => 128],
-            [['state'], 'string', 'max' => 1],
+            [['create_time', 'update_time', 'charge'], 'default', 'value' => 0],
+            [['member_name','loginpwd','paypwd','member_mobile'],'required','on'=>'Reg'],
             [['member_mobile'],'unique','on'=>'Reg'],
             [['member_mobile'],'unique','on'=>'Edit'],
         ];
@@ -41,11 +41,11 @@ class MemberModel extends BaseModel
             'invite_id' => '推荐人',
             'openid' => '微信openid',
             'member_avatar' => '用户头像',
-            'state' => '用户状态',  //  1正常 0冻结
+            'state_id' => '用户状态',  //  1正常 0冻结
             'create_time' => '创建时间',
             'update_time' => '更新时间',
         ];
-    }    
+    }
 
     /*
         通过id获取用户
@@ -53,7 +53,7 @@ class MemberModel extends BaseModel
     public static function getMemberById($memberId,$field=['*'])
     {
         if(!$memberId) return false;
-        return self::find()->select($field)->where(['member_id' => $memberId])->asarray()->one();
+        return self::find()->select($field)->from(['m' => MemberModel::tableName()])->leftJoin(MemberTypeModel::tableName().' mt','mt.member_type_id=m.member_type_id')->where(['member_id' => $memberId])->asArray()->one();
     }
 
     /*
@@ -62,7 +62,7 @@ class MemberModel extends BaseModel
     public static function queryMember($memberKey,$field)
     {
         if(!$memberKey) return false;
-        $where = ['or','member_id='.$memberKey,'member_mobile="'.$memberKey.'"'];
+            $where = ['or','member_id='.$memberKey,'member_mobile="'.$memberKey.'"'];
         return self::find()->select($field)->where($where)->asarray()->one();
     }
 
@@ -70,5 +70,21 @@ class MemberModel extends BaseModel
     public static function generateAuthKey()
     {
         return Yii::$app->security->generateRandomString();
+    }
+
+    /*
+        获取所有未入住会员
+    */
+    public static function getMemberAll()
+    {
+        return self::find()->select(['member_id','member_name'])->where(['state_id' => RoomState::getRoomStateId()])->asArray()->all();
+    }
+
+    /*
+        修改会员状态
+    */
+    public static function setStateId($id,$stateId)
+    {
+        self::updateAll(['state_id'=>$stateId],['member_id'=>$id]);
     }
 }

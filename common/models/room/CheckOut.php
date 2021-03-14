@@ -34,6 +34,7 @@ class CheckOut extends BaseModel
             [['member_id', 'room_id', 'in_time', 'out_time'], 'integer'],
             [['deposit', 'charge'], 'number'],
             [['mark'], 'string', 'max' => 20],
+            [['member_id','room_id','in_time','out_time','deposit'],'required','on'=>'Reg'],
         ];
     }
 

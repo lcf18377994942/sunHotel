@@ -52,7 +52,7 @@ class RoomType extends BaseModel
     */
     public static function getRoomTypeAll()
     {
-        return self::find()->select(['type_id','type_name'])->indexBy('type_id')->asArray()->all();
+        return self::find()->select(['type_id','type_name'])->asArray()->all();
     }
 
     /*

@@ -47,7 +47,7 @@ class RoomFloor extends BaseModel
     */
     public static function getRoomFloorAll()
     {
-        return self::find()->select(['floor_id','floor_number'])->indexBy('floor_id')->asArray()->all();
+        return self::find()->select(['floor_id','floor_number'])->asArray()->all();
     }
 
     /*

@@ -5,6 +5,7 @@
 namespace apiadmin\modules\models\member;
 use common\models\member\MemberTypeModel;
 use common\models\member\MemberModel;
+use common\models\room\RoomState;
 
 class Member extends MemberModel
 {
@@ -29,6 +30,7 @@ class Member extends MemberModel
 		//扩展信息
 		if(!$extends) return $data;
 
+        $state = RoomState::find()->indexBy('state_id')->asArray()->all();
         foreach($data as &$val)
         {
             foreach($extends as $eType)
@@ -37,6 +39,8 @@ class Member extends MemberModel
                 if($eType=='member_type'){
                     $type = MemberTypeModel::getMemberTypeById($val['member_type_id']);
                     $val['member_type_name'] = $type?$type['member_type_name']:'无';
+                } elseif ($eType=='room_state') {
+                    $val['state_id'] = isset($state[$val['state_id']]) ? $state[$val['state_id']]['state_name']:'无';
                 }
             }
         }

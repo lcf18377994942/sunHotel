@@ -1,6 +1,7 @@
 <?php
-namespace apiadmin\modules\v1\controllers\member; 
-use apiadmin\modules\v1\controllers\CoreController;
+namespace apiadmin\modules\controllers\member;
+use apiadmin\modules\controllers\CoreController;
+use common\models\member\MemberTypeModel;
 use \Yii;
 use common\utils\OutputExecl;
 use apiadmin\modules\models\member\Member;
@@ -18,13 +19,13 @@ class MemberController extends CoreController
 	{
 		$where  = $this->formartWhere();
 		$params = array(
-			'field'	=> ['member_id','member_name','sex','member_card_id','member_mobile','invite_id','member_avatar','member_type_id','state',
+			'field'	=> ['member_id','member_name','sex','member_card_id','member_mobile','member_avatar','member_type_id','charge','state_id',
 			'create_time','update_time'],
 			'order' => 'member_id desc',
 			'page'	=> $this->request('page','1'),
 			'limit' => $this->request('page_size',10),
 		);
-        $extends = array('member_type');
+        $extends = array('member_type','room_state');
 		$list = Member::MemberList($where,$params,$extends);
 		$pages = Member::$pages;
 		$this->out('会员列表',$list,array('pages'=>$pages));
@@ -74,7 +75,7 @@ class MemberController extends CoreController
 	public function actionMember_info()
 	{
 		if(!$memberId = $this->request('member_id')) $this->error('参数错误');
-		$field  = ['member_id','member_name','member_mobile'];
+		$field  = ['member_id','member_name','member_type_name','member_card_id','trate'];
 		$member = Member::getMemberById($memberId,$field);
 		$this->out('会员信息',$member);
 	}
@@ -131,7 +132,7 @@ class MemberController extends CoreController
 	{
 		$where  = $this->formartWhere();
 		$params = array(
-			'field'	=> ['member_id','member_name','member_mobile','invite_id','state',
+			'field'	=> ['member_id','member_name','member_mobile','invite_id','state_id',
 			'create_time','update_time'],
 			'order' => 'member_id desc',
 			'page'	=> $this->request('page','1'),
@@ -148,7 +149,7 @@ class MemberController extends CoreController
 			$temp[] = $val['member_id'];
 			$temp[] = $val['member_name'];
 			$temp[] = $val['member_mobile'];
-			$temp[] = $val['state']?'正常':'冻结';
+			$temp[] = $val['state_id']?'正常':'冻结';
 			$temp[] = date("Y-m-d H:i:s",$val['create_time']);
 			$exportData[] = $temp;
 		}

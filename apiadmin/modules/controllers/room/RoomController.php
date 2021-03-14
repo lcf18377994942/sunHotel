@@ -85,7 +85,7 @@ class RoomController extends CoreController
     public function actionRoom()
     {
         if(!$roomId = $this->request('room_id')) $this->error('参数错误');
-        $field  = ['room_id','room_name','type_id','state_id','floor_id','mark'];
+        $field  = ['room_id','room_name',Room::tableName().'.type_id','price','type_name','state_id','floor_id','mark'];
         $room = Room::getRoomById($roomId,$field);
         $this->out('房间信息',$room);
     }

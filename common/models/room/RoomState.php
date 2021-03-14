@@ -47,7 +47,7 @@ class RoomState extends BaseModel
     */
     public static function getRoomStateAll()
     {
-        return self::find()->select(['state_id','state_name'])->indexBy('state_id')->asArray()->all();
+        return self::find()->select(['state_id','state_name'])->asArray()->all();
     }
 
     /*
@@ -57,5 +57,13 @@ class RoomState extends BaseModel
     {
         if(!$stateId) return false;
         return self::find()->select($field)->where(['state_id' => $stateId])->asArray()->one();
+    }
+
+    /*
+        通过状态名获取未入住状态ID
+    */
+    public static function getRoomStateId($state_name = '未入住')
+    {
+        return self::find()->select('state_id')->where(['state_name' => $state_name])->asArray()->one()['state_id'];
     }
 }
