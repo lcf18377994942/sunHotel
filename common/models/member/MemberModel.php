@@ -53,7 +53,11 @@ class MemberModel extends BaseModel
     public static function getMemberById($memberId,$field=['*'])
     {
         if(!$memberId) return false;
-        return self::find()->select($field)->from(['m' => MemberModel::tableName()])->leftJoin(MemberTypeModel::tableName().' mt','mt.member_type_id=m.member_type_id')->where(['member_id' => $memberId])->asArray()->one();
+        return self::find()->select($field)
+            ->from(['m' => MemberModel::tableName()])
+            ->leftJoin(MemberTypeModel::tableName().' mt','mt.member_type_id=m.member_type_id')
+            ->where(['member_id' => $memberId])
+            ->asArray()->one();
     }
 
     /*
@@ -75,9 +79,14 @@ class MemberModel extends BaseModel
     /*
         获取所有未入住会员
     */
-    public static function getMemberAll()
+    public static function getMemberAll($id = 0)
     {
-        return self::find()->select(['member_id','member_name'])->where(['state_id' => RoomState::getRoomStateId()])->asArray()->all();
+        return self::find()->select(['member_id','member_name'])
+            ->from(['m' => self::tableName()])
+            ->leftJoin(RoomState::tableName().' rs','rs.state_id=m.state_id')
+            ->where(['m.state_id' => RoomState::getRoomStateId()])
+            ->orWhere(['member_id'=>$id])
+            ->asArray()->all();
     }
 
     /*

@@ -3,7 +3,6 @@ namespace apiadmin\modules\controllers\room;
 use apiadmin\modules\controllers\CoreController;
 use apiadmin\modules\models\room\CheckIn;
 use common\models\member\MemberModel;
-use common\models\room\CheckOut;
 use common\models\room\Room;
 use common\models\room\RoomState;
 
@@ -20,7 +19,7 @@ class CheckInController extends CoreController
     {
         $where  = $this->formartWhere();
         $params = array(
-            'field'	=> ['check_in_id','member_name','room_name','type_name','deposit','ci.charge','ci.mark','in_time','out_time'],
+            'field'	=> ['check_in_id','member_name','room_name','type_name','ci.deposit','ci.charge','ci.mark','in_time','out_time'],
             'order' => 'check_in_id desc',
             'page'	=> $this->request('page','1'),
             'limit' => $this->request('page_size',10),
@@ -30,11 +29,15 @@ class CheckInController extends CoreController
         $this->out('入住列表',$list,array('pages'=>$pages));
     }
 
-    //获取入住下拉数据
+    //获取未入住下拉数据
     public function actionGetListAll()
     {
-        $list['member'] = MemberModel::getMemberAll();
-        $list['room'] = Room::getRoomAll();
+        $params = $this->request;
+        $roomId = isset($params['room_id']) ? $params['room_id'] : 0;
+        $list['room'] = Room::getNullRoom($roomId);
+
+        $memberId = isset($params['member_id']) ? $params['member_id'] : 0;
+        $list['member'] = MemberModel::getMemberAll($memberId);
         $this->out('会员入住',$list);
     }
 
@@ -48,14 +51,18 @@ class CheckInController extends CoreController
         foreach($searchKeys as $k=>$val)
         {
             if(!$val) continue;
-            if($k=='date')
+            if($k=='inDate' || $k=='outDate')
             {
                 if(!$val['0'] || !$val['1']) continue;
-                $whereAnd[] = ['between', 'update_time', strtotime($val[0]),strtotime($val[1])];
-            }elseif ($k=='CheckIn_name') {
+                $date = $k=='inDate' ? 'in_time' :'out_time';
+                $whereAnd[] = ['between', $date, strtotime($val[0]),strtotime($val[1])];
+            }elseif ($k=='member_name' || $k=='room_name') {
                 $whereAnd[] = ['like',$k,$val];
             }else
             {
+                if ($k=='type_id') {
+                    $k = 'r.type_id';
+                }
                 $where[$k] = $val;
             }
         }
@@ -70,7 +77,7 @@ class CheckInController extends CoreController
     public function actionCheck_in_del()
     {
         if(!$CheckInId = $this->request('check_in_id')) $this->error('参数错误');
-        $checkInfo = CheckIn::getCheckIdById($CheckInId);
+        $checkInfo = CheckIn::getInfo(['check_in_id' => $CheckInId]);
         $res = CheckIn::CheckInDel($CheckInId);
         if($res){
             //修改用户和房间状态
@@ -78,10 +85,12 @@ class CheckInController extends CoreController
             Room::setStateId($checkInfo['room_id'],RoomState::getRoomStateId());
             //添加退房信息
             $checkOut = $this->model('room\CheckOut',$checkInfo,'Reg');
+            $checkOut->charge = $checkOut->charge - $checkOut->deposit;
+            $checkOut->out_time = time();
             $checkOut->save();
-            $this->out('删除成功');
+            $this->out('退房成功');
         }
-        $this->error('删除失败');
+        $this->error('退房失败');
     }
 
     /*
@@ -91,27 +100,33 @@ class CheckInController extends CoreController
     public function actionCheck_in()
     {
         if(!$CheckInId = $this->request('check_in_id')) $this->error('参数错误');
-        $field  = ['CheckIn_id','CheckIn_name','type_id','state_id','floor_id','mark'];
+        $field = ['ci.*','member_card_id','room_name','type_name','price','discount'];
         $CheckIn = CheckIn::getCheckIdById($CheckInId,$field);
-        $this->out('入住信息',$CheckIn);
-    }
-
-    /*
-        通过id或是电话 搜索入住信息
-        * CheckIn
-    */
-    public function actionQuery_Check_in()
-    {
-        if(!$CheckInKey = $this->request('CheckIn_key')) $this->error('参数错误');
-        $field  = ['CheckIn_id','CheckIn_name','type_id'];
-        $CheckIn = CheckIn::queryCheckIn($CheckInKey,$field);
         $this->out('入住信息',$CheckIn);
     }
 
     //入住信息修改
     public function actionCheck_in_edit()
     {
-        $this->save('room\CheckIn','Edit',$this->request('CheckIn_id'));
+        $params = $this->request;
+        $checkIn = $this->model('room\CheckIn',$params,'Edit',$params['check_in_id']);
+        $checkIn->charge = bcadd(bcmul($params['price'],$params['discount'],2),$params['deposit'],2);
+        $msg = '';
+        if ($params['room_id'] != $params['old_room_id']) {
+            $msg .= '【原房间名称：'.$params['room_name'].'】';
+            Room::setStateId($params['room_id'],RoomState::getRoomStateId('已入住'));
+            Room::setStateId($params['old_room_id'],RoomState::getRoomStateId());
+        }
+        if ($params['charge'] != $checkIn->charge) {
+            if ($params['charge'] < $checkIn->charge) {
+                $msg .= '【原消费：'.$params['charge'].'，需补交：'.($checkIn->charge - $params['charge']).'元】';
+            } else {
+                $msg .= '【原消费：'.$params['charge'].'，需退还：'.($params['charge'] - $checkIn->charge).'元】';
+            }
+        }
+        $checkIn->mark = $msg;
+        if(!$checkIn->save(false)) $this->error('修改失败');
+        $this->out('修改成功');
     }
 
     //入住添加
@@ -119,13 +134,13 @@ class CheckInController extends CoreController
     {
         $params = $this->request;
         $checkIn = $this->model('room\CheckIn',$params,'Reg');
-        $checkIn->charge = bcadd(bcmul($params['price'],$params['trate'],2),$params['deposit'],2);
+        $checkIn->charge = bcadd(bcmul($params['price'],$params['discount'],2),$params['deposit'],2);
         if(!$checkIn->save(false)) $this->error('添加失败');
         //修改用户和房间状态
         MemberModel::setStateId($params['member_id'],RoomState::getRoomStateId('已入住'));
         Room::setStateId($params['room_id'],RoomState::getRoomStateId('已入住'));
         //返回数据
-        $this->out('添加成功',$params);
+        $this->out('添加成功');
     }
 
     //会员导出

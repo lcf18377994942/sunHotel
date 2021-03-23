@@ -21,13 +21,12 @@ class RoomController extends CoreController
     {
         $where  = $this->formartWhere();
         $params = array(
-            'field'	=> ['room_id','room_name','type_id','state_id','floor_id','mark','create_time','update_time'],
+            'field'	=> ['room_id','room_name','type_name','price','state_name','floor_number','mark','create_time','update_time'],
             'order' => 'room_id desc',
             'page'	=> $this->request('page','1'),
             'limit' => $this->request('page_size',10),
         );
-        $extends = array('room_type','room_state','room_floor');
-        $list = Room::RoomList($where,$params,$extends);
+        $list = Room::RoomList($where,$params);
         $pages = Room::$pages;
         $this->out('房间列表',$list,array('pages'=>$pages));
     }
@@ -35,9 +34,9 @@ class RoomController extends CoreController
     //获取房间下拉数据
     public function actionGetListAll()
     {
-        $list['type'] = RoomType::getRoomTypeAll();
-        $list['state'] = RoomState::getRoomStateAll();
-        $list['floor'] = RoomFloor::getRoomFloorAll();
+        $list['room_type'] = RoomType::getRoomTypeAll();
+        $list['room_state'] = RoomState::getRoomStateAll();
+        $list['room_floor'] = RoomFloor::getRoomFloorAll();
         $this->out('类型状态',$list);
     }
 
@@ -59,6 +58,11 @@ class RoomController extends CoreController
                 $whereAnd[] = ['like',$k,$val];
             }else
             {
+                if ($k=='state_id') {
+                    $k = 'r.state_id';
+                }elseif ($k=='type_id') {
+                    $k = 'r.type_id';
+                }
                 $where[$k] = $val;
             }
         }
@@ -85,21 +89,18 @@ class RoomController extends CoreController
     public function actionRoom()
     {
         if(!$roomId = $this->request('room_id')) $this->error('参数错误');
-        $field  = ['room_id','room_name',Room::tableName().'.type_id','price','type_name','state_id','floor_id','mark'];
+        $field  = ['r.*','price','type_name'];
         $room = Room::getRoomById($roomId,$field);
         $this->out('房间信息',$room);
     }
 
     /*
-        通过id或是电话 搜索房间信息
-        * room
+        获取未入住房间信息
     */
-    public function actionQuery_room()
+    public function actionGetNullRoom()
     {
-        if(!$roomKey = $this->request('room_key')) $this->error('参数错误');
-        $field  = ['room_id','room_name','type_id'];
-        $room = Room::queryRoom($roomKey,$field);
-        $this->out('房间信息',$room);
+//        $this->request('search') = ;
+        $this->out('房间信息', Room::getNullRoom(['room_id','room_name','type_name','price','state_name','floor_number','mark','create_time','update_time']));
     }
 
     //房间信息修改

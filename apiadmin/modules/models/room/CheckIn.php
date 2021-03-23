@@ -16,19 +16,12 @@ class CheckIn extends CheckInModel
     */
     public static function CheckInList($whereArr,$params)
     {
-        $model  = self::find();
-        $where  = $whereArr['where'];
-        $whereAnd = isset($whereArr['whereAnd'])?$whereArr['whereAnd']:[];
-        $models = self::queryFormart($model,$where,$params,$whereAnd);
-        $model  = $models['model'];
-        self::$pages = $models['pages'];
-
-        $data = $model->from(['ci'=>self::tableName()])
+        $model  = self::find()->from(['ci'=>self::tableName()])
             ->leftJoin(MemberModel::tableName().' m','m.member_id=ci.member_id')
             ->leftJoin(Room::tableName().' r','r.room_id=ci.room_id')
-            ->leftJoin(RoomType::tableName().' rt','rt.type_id=r.type_id')
-            ->asArray()->all();
-        return $data ? $data : [];
+            ->leftJoin(RoomType::tableName().' rt','rt.type_id=r.type_id');
+
+        return self::getlist($model,$whereArr,$params);
     }
 
     /*

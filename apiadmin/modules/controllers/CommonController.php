@@ -75,9 +75,5 @@ class CommonController extends CoreController
 		return $filePath;
 			
 	}
-
-
-
-
 }
 

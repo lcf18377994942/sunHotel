@@ -3,9 +3,10 @@
 	基础模型
 */
 namespace common\models;
-use \Yii;
+use Yii;
+use yii\db\ActiveRecord;
 
-class BaseModel extends \yii\db\ActiveRecord
+class BaseModel extends ActiveRecord
 {
 	//总记录数
 	public static $pages;
@@ -66,5 +67,27 @@ class BaseModel extends \yii\db\ActiveRecord
 		$errMsg =  array_shift($firstError);
 		return array('state'=>false,'msg'=>$errMsg);
 	}
+
+	//封装查询
+    public static function getlist($model,$whereArr,$params){
+        $whereAnd = isset($whereArr['whereAnd'])?$whereArr['whereAnd']:[];
+        $models = self::queryFormart($model,$whereArr['where'],$params,$whereAnd);
+        $model  = $models['model'];
+        self::$pages = $models['pages'];
+
+        $data = $model->asArray()->all();
+        return $data ? $data : [];
+    }
+
+    /**
+     * 获取单条数据
+     * @param array $fields
+     * @param array $where
+     * @return array|null|ActiveRecord
+     */
+    public static function getInfo(array $where,array $fields = ['*'])
+    {
+        return self::find()->select($fields)->where($where)->asArray()->one();
+    }
 
 }

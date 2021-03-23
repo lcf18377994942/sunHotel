@@ -16,41 +16,14 @@ class Room extends RoomModel
         * params 基本参数 包含 field order page limit
         * extends  扩展信息 一些相关的信息
     */
-    public static function RoomList($whereArr,$params,$extends=array())
+    public static function RoomList($whereArr,$params)
     {
-        $model  = self::find();
-        $where  = $whereArr['where'];
-        $whereAnd = isset($whereArr['whereAnd'])?$whereArr['whereAnd']:[];
-        $models = self::queryFormart($model,$where,$params,$whereAnd);
-        $model  = $models['model'];
-        self::$pages = $models['pages'];
+        $model  = self::find()->from(['r'=>self::tableName()])
+            ->leftJoin(RoomState::tableName().' rs','rs.state_id=r.state_id')
+            ->leftJoin(RoomType::tableName().' rt','rt.type_id=r.type_id')
+            ->leftJoin(RoomFloor::tableName().' rf','rf.floor_id=r.floor_id');
 
-        $data  = $model->asArray()->all();
-        if(!$data) return array();
-        //扩展信息
-        if(!$extends) return $data;
-
-        $type = RoomType::find()->indexBy('type_id')->asArray()->all();
-        $state = RoomState::find()->indexBy('state_id')->asArray()->all();
-        $floor = RoomFloor::find()->indexBy('floor_id')->asArray()->all();
-        foreach($data as &$val)
-        {
-            foreach($extends as $eType)
-            {
-                //获取分类
-                if($eType=='room_type'){
-                    $val['type_id'] = isset($type[$val['type_id']]) ? $type[$val['type_id']]['type_name']:'无';
-                    $val['price'] = isset($type[$val['type_id']]) ? $type[$val['type_id']]['price']:'0';
-                } elseif ($eType=='room_state') {
-                    $val['state_id'] = isset($state[$val['state_id']]) ? $state[$val['state_id']]['state_name']:'无';
-                } elseif ($eType=='room_floor') {
-                    $val['floor_id'] = isset($floor[$val['floor_id']]) ? $floor[$val['floor_id']]['floor_number']:'无';
-                }
-            }
-        }
-        /*$data['type'] = $type;
-        $data['state'] = $state;*/
-        return $data;
+        return self::getlist($model,$whereArr,$params);
     }
 
     /*

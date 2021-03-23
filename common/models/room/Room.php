@@ -11,6 +11,7 @@ use common\models\BaseModel;
  * @property int $type_id 类型编号
  * @property int $state_id 状态编号
  * @property int $floor_id 楼层编号
+ * @property float $deposit 押金
  * @property string $mark 备注
  * @property int $create_time 创建时间
  * @property int $update_time 更新时间
@@ -32,9 +33,11 @@ class Room extends BaseModel
     {
         return [
             [['type_id', 'state_id', 'floor_id', 'create_time', 'update_time'], 'integer'],
+            [['deposit'], 'number'],
             [['room_name', 'mark'], 'string', 'max' => 20],
-            [['room_name','type_id','state_id','floor_id'],'required','on'=>'Reg'],
+            [['room_name','type_id','state_id','floor_id','deposit'],'required','on'=>'Reg'],
             [['room_name'],'unique','on'=>'Reg'],
+            [['room_name','type_id','state_id','floor_id','deposit'],'required','on'=>'Edit'],
             [['room_name'],'unique','on'=>'Edit'],
         ];
     }
@@ -56,37 +59,30 @@ class Room extends BaseModel
         ];
     }
 
-    //关联sys_role表
-    public function getRoomType()
-    {
-        return $this->hasOne(RoomType::className(), ['type_id' => 'type_id']);
-    }
-
     /*
         通过id获取房间
     */
     public static function getRoomById($roomId,$field=['*'])
     {
         if(!$roomId) return false;
-        return self::find()->select($field)->where(['room_id' => $roomId])->leftJoin(RoomType::tableName().' rt','rt.type_id='.Room::tableName().'.type_id')->asArray()->one();
+        return self::find()->select($field)
+            ->from(['r'=>Room::tableName()])
+            ->where(['room_id' => $roomId])
+            ->leftJoin(RoomType::tableName().' rt','rt.type_id=r.type_id')
+            ->asArray()->one();
     }
 
     /*
-        通过id 或是 类型等信息查询房间
+        获取所有未入住下拉房间
     */
-    public static function queryRoom($RoomKey,$field)
+    public static function getNullRoom($id = 0)
     {
-        if(!$RoomKey) return false;
-        $where = ['or','room_id='.$RoomKey,'type_id="'.$RoomKey.'"'];
-        return self::find()->select($field)->where($where)->asarray()->one();
-    }
-
-    /*
-        获取所有未入住房间
-    */
-    public static function getRoomAll()
-    {
-        return self::find()->select(['room_id','room_name'])->where(['state_id' => RoomState::getRoomStateId()])->asArray()->all();
+        return self::find()->select(['room_id','room_name'])
+            ->from(['r' => self::tableName()])
+            ->leftJoin(RoomState::tableName().' rs','rs.state_id=r.state_id')
+            ->where(['r.state_id' => RoomState::getRoomStateId()])
+            ->orWhere(['room_id'=>$id])
+            ->asArray()->all();
     }
 
     /*

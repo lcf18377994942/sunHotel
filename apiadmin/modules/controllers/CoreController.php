@@ -62,8 +62,7 @@ class CoreController extends ActiveController
         $request = array_merge(Yii::$app->request->post(),Yii::$app->request->get(),$_FILES);
         return isset($request[$key])?$request[$key]:$default;
     }
-     
-        
+
     public function out($msg='', $res = [],$extend=[]){
         $data = [
             'status' => "200"  ,
@@ -91,10 +90,11 @@ class CoreController extends ActiveController
         exit($out);
     }
 
-
     protected function parameter($request = [], $model = [])
     {
-        $request['create_time'] = time(); // '创建时间'
+        if (!isset($model->create_time)) {
+            $request['create_time'] = time(); // '创建时间'
+        }
         $request['update_time'] = time(); // '修改时间'
         foreach ($request as $k => $v) {
             if (array_key_exists($k, $model->attributes))
@@ -102,8 +102,7 @@ class CoreController extends ActiveController
         }
         return $model;
     }
-    
-    
+
     public function model($model,$params,$scenario='',$id='')
     {
 
@@ -112,10 +111,10 @@ class CoreController extends ActiveController
             $classDir = '\\common\\models\\'.$model;
         }
         $m = new $classDir();
-        if($id) $m = $m::findOne($id); 
+        if(!empty($id)) $m = $m::findOne($id);
 
         if(!$m) $this->error(' model cannot be blank.');
-        if($scenario) $m->scenario = $scenario;
+        if(!empty($scenario)) $m->scenario = $scenario;
 
         $m = $this->parameter($params,$m);
         $m->validate() ?:$this->error($this->model_errors($m->errors));
@@ -131,13 +130,12 @@ class CoreController extends ActiveController
 
     public function save($path,$scenario='Reg',$id='')
     {
-        $params = array_unique($this->request);
         if ($scenario == 'Reg') {
             $msg = '添加';
-            $Model = $this->model($path,$params,$scenario);
+            $Model = $this->model($path,$this->request,$scenario);
         }else {
             $msg = '修改';
-            $Model = $this->model($path,$params,$scenario,$id);
+            $Model = $this->model($path,$this->request,$scenario,$id);
         }
         if(!$Model->save(false)) $this->error($msg.'失败');
         $this->out($msg.'成功');
@@ -153,8 +151,7 @@ class CoreController extends ActiveController
         curl_close($curl);
         return $data;
     }
-    
-    
+
     public function post_curl($url,$params)
     {
         $httpInfo = array();
@@ -193,9 +190,8 @@ class CoreController extends ActiveController
         }
         $path = $dir.'/'.date('Y-m-d').'.txt';
         file_put_contents($path,$content,FILE_APPEND);
-    }   
+    }
 
-    
 }
 
 ?>

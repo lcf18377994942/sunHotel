@@ -75,7 +75,7 @@ class MemberController extends CoreController
 	public function actionMember_info()
 	{
 		if(!$memberId = $this->request('member_id')) $this->error('参数错误');
-		$field  = ['member_id','member_name','member_type_name','member_card_id','trate'];
+		$field  = ['member_id','member_name','member_type_name','member_card_id','discount'];
 		$member = Member::getMemberById($memberId,$field);
 		$this->out('会员信息',$member);
 	}

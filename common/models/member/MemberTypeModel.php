@@ -8,7 +8,7 @@ use common\models\BaseModel;
  *
  * @property int $member_type_id 类别编号
  * @property string $member_type_name 类别名称
- * @property float $trate 折扣
+ * @property float $discount 折扣
  * @property int $created_time 创建时间
  * @property int $updated_time 更新时间
  */
@@ -29,7 +29,7 @@ class MemberTypeModel extends BaseModel
     {
         return [
             [['member_type_name'], 'required'],
-            [['trate'], 'number'],
+            [['discount'], 'number'],
             [['created_time', 'updated_time'], 'integer'],
             [['member_type_name'], 'string', 'max' => 10],
         ];
@@ -43,7 +43,7 @@ class MemberTypeModel extends BaseModel
         return [
             'member_type_id' => '类别编号',
             'member_type_name' => '类别名称',
-            'trate' => '折扣',
+            'discount' => '折扣',
             'created_time' => '创建时间',
             'updated_time' => '更新时间',
         ];
