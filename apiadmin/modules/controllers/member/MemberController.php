@@ -174,8 +174,8 @@ class MemberController extends CoreController
 			$temp[] = date("Y-m-d H:i:s",$val['create_time']);
 			$exportData[] = $temp;
 		}
-		$headData = array('A1'=>'会员ID','B1'=>'会员姓名','C1'=>'会员电话','D1'=>'会员状态','E1'=>'注册时间');
-		$fileName = 'member-'.date('Y-m-d').'.xls';
+		$headData = ['A1'=>'会员ID','B1'=>'会员姓名','C1'=>'会员电话','D1'=>'注册时间'];
+		$fileName = 'member-'.date('Y-m-d').'.xlsx';
 		$execlObj = new OutputExecl();
 		$res = $execlObj->output($headData,$exportData,$fileName);
 		if($res)

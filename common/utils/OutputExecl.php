@@ -1,6 +1,6 @@
 <?php
 namespace common\utils;
-use yii\base\Object;
+use yii\base\BaseObject;
 use Yii;
 
 /*
@@ -51,7 +51,7 @@ class OutputExecl
 		$objPHPExcel->setActiveSheetIndex(0);
 
         if(!$filename)
-            $filename = time().rand(1000,9999).'.xls';
+            $filename = time().rand(1000,9999).'.xlsx';
 
 
         $dir = '/data/execl/';
