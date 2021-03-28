@@ -5,7 +5,7 @@
 namespace apiadmin\modules\models\member;
 use common\models\member\MemberTypeModel;
 use common\models\member\MemberModel;
-use common\models\room\RoomState;
+use common\models\room\RoomStateModel;
 
 class Member extends MemberModel
 {
@@ -30,7 +30,7 @@ class Member extends MemberModel
 		//扩展信息
 		if(!$extends) return $data;
 
-        $state = RoomState::find()->indexBy('state_id')->asArray()->all();
+        $state = RoomStateModel::find()->indexBy('state_id')->asArray()->all();
         foreach($data as &$val)
         {
             foreach($extends as $eType)

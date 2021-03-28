@@ -8,7 +8,7 @@ use common\models\BaseModel;
  *
  * @property int $member_type_id 类别编号
  * @property string $member_type_name 类别名称
- * @property float $discount 折扣
+ * @property float $discount 折扣比例
  * @property int $created_time 创建时间
  * @property int $updated_time 更新时间
  */
@@ -43,7 +43,7 @@ class MemberTypeModel extends BaseModel
         return [
             'member_type_id' => '类别编号',
             'member_type_name' => '类别名称',
-            'discount' => '折扣',
+            'discount' => '折扣比例',
             'created_time' => '创建时间',
             'updated_time' => '更新时间',
         ];
@@ -55,5 +55,13 @@ class MemberTypeModel extends BaseModel
     public static function getMemberTypeById($id)
     {
         return MemberTypeModel::findOne(['member_type_id'=>$id]);
+    }
+
+    /*
+        获取所有会员类型
+    */
+    public static function getMemberTypeAll()
+    {
+        return self::find()->select(['member_type_id','member_type_name'])->asArray()->all();
     }
 }

@@ -103,7 +103,7 @@ export default{
 			this.ifload = true;
 			this.$post_('finance/balance/balance_op_list',params,(res) => {
 				console.log(res);
-				if(res.code=='0'){
+				if(res.code==='0'){
 					this.list = res.data;
 					this.pages = Number(res.extend.pages);
                     this.typeName = res.extend.type_name;

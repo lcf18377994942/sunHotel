@@ -2,12 +2,13 @@
 namespace apiadmin\modules\controllers\member;
 use apiadmin\modules\controllers\CoreController;
 use common\models\member\MemberTypeModel;
-use \Yii;
+use common\models\room\RoomStateModel;
+use Yii;
 use common\utils\OutputExecl;
 use apiadmin\modules\models\member\Member;
 
 /**
-* 订单相关控制器
+* 会员相关控制器
 */
 
 class MemberController extends CoreController
@@ -44,7 +45,7 @@ class MemberController extends CoreController
 			if($k=='date')
 			{
 				if(!$val['0'] || !$val['1']) continue;
-				$whereAnd[] = ['between', 'create_time', strtotime($val[0]),strtotime($val[1])]; 
+				$whereAnd[] = ['between', 'create_time', strtotime($val[0]),strtotime($val[1])];
 			}elseif ($k=='member_name') {
 				$whereAnd[] = ['like',$k,$val];
 			}else
@@ -54,7 +55,15 @@ class MemberController extends CoreController
 		}
 
 		return array('where'=>$where,'whereAnd'=>$whereAnd);
-	}	
+	}
+
+    //获取房间下拉数据
+    public function actionGetMemberTypeAll()
+    {
+        $list['member_type'] = MemberTypeModel::getMemberTypeAll();
+        $list['member_state'] = array_slice(RoomStateModel::getRoomStateAll(),0,3);
+        $this->out('会员类型',$list);
+    }
 
 	/*
 		删除会员
@@ -75,10 +84,22 @@ class MemberController extends CoreController
 	public function actionMember_info()
 	{
 		if(!$memberId = $this->request('member_id')) $this->error('参数错误');
-		$field  = ['member_id','member_name','member_type_name','member_card_id','discount'];
+		$field  = ['member_id','member_name','sex','member_card_id','member_mobile','m.member_type_id','charge','m.state_id','discount'];
 		$member = Member::getMemberById($memberId,$field);
 		$this->out('会员信息',$member);
 	}
+
+    /*
+        获取次会员列表
+        * member_id 会员ID
+    */
+    public function actionGetSecondList()
+    {
+        $params = $this->request;
+        $memberId = isset($params['member_id']) ? $params['member_id'] : 0;
+        $list['member'] = Member::getSecondMemberAll($memberId);
+        $this->out($memberId,$list);
+    }
 
 	/*
 		通过id或是电话 搜索会员信息
@@ -105,7 +126,7 @@ class MemberController extends CoreController
 		if($params['paypwd'])
 			$params['paypwd'] = md5($params['paypwd']);
 		else
-			unset($params['paypwd']);		
+			unset($params['paypwd']);
 
 		$memberModel = $this->model('member\Member',$params,'Edit',$this->request('member_id'));
 		$memberModel->update_time = time();

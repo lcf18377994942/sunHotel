@@ -282,7 +282,7 @@
 				}
 				this.$post_('goods/goods-class/get_class_spec',params,(res) => {
 					console.log(res);
-					if(res.code=='0'){
+					if(res.code ==='0'){
 						this.specArr = res.data;
 						if(res.extend) this.form.type_id = res.extend.type_id;
 						// if(this.goodsCommonid>0){
@@ -417,7 +417,7 @@
 				this.$post_('goods/goods/add_step1',this.form,(res)=>{
 					console.log(res);
 					this.ifload = false;
-					if(res.code=='0'){
+					if(res.code ==='0'){
 						this.$message.success(res.msg);
 						let goodsCommonid = Number(res.data.goods_commonid);
 						this.$emit('baseSuccess',goodsCommonid);

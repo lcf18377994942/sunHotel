@@ -185,7 +185,7 @@
                 // console.log(this.form);return;
                 this.$post_('admin/auth-rule/add_auth_rule',this.form,(res)=>{
                     console.log(res);
-                    if(res.code=='0'){
+                    if(res.code ==='0'){
                         this.getData();
                         this.$message.success(res.msg);
                     }else{
@@ -198,7 +198,7 @@
             deleteRow(){
                 this.$post_('admin/auth-rule/del_auth_rule',{id:this.id},(res)=>{
                     console.log(res);
-                    if(res.code=='0'){
+                    if(res.code ==='0'){
                         this.$message.success(res.msg);
                     }else{
                         this.$message.warning(res.msg);

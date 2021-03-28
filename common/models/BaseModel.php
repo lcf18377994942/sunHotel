@@ -90,4 +90,20 @@ class BaseModel extends ActiveRecord
         return self::find()->select($fields)->where($where)->asArray()->one();
     }
 
+    /**
+     * 新增数据并且返回自增id
+     * @param $data
+     * @return int|string
+     * @throws \yii\db\Exception
+     */
+    public static function insertData($data)
+    {
+        if (!empty($data)) {
+            Yii::$app->db->createCommand()->insert(static::tableName(), $data)->execute();
+            return Yii::$app->db->lastInsertID;
+        } else {
+            return 0;
+        }
+    }
+
 }

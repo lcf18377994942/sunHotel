@@ -144,7 +144,7 @@ export default{
 			this.ifload = true;
 			this.$post_('finance/balance/balance_list',params,(res) => {
 				console.log(res);
-				if(res.code=='0'){
+				if(res.code==='0'){
 					this.list = res.data;
 					this.pages = Number(res.extend.pages);
                     this.typeName = res.extend.type_name;
@@ -176,7 +176,7 @@ export default{
 			}
 			this.$post_('member/member/export',params,(res) => {
 				console.log(res);
-				if(res.code=='0'){
+				if(res.code==='0'){
 					download(res.data.url);
 				}
                 this.ifload = false;

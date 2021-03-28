@@ -1,6 +1,6 @@
 <?php
 namespace common\models\member;
-use common\models\room\RoomState;
+use common\models\room\RoomStateModel;
 use Yii;
 use common\models\BaseModel;
 
@@ -21,11 +21,15 @@ class MemberModel extends BaseModel
             [['create_time', 'update_time', 'state_id'], 'integer'],
             [['member_name'], 'string', 'max' => 64],
             [['member_mobile'], 'string', 'max' => 13],
-            [['openid', 'member_avatar'], 'string', 'max' => 128],
+            [['member_card_id'], 'string', 'max' => 18],
+            [['member_avatar'], 'string', 'max' => 128],
             [['create_time', 'update_time', 'charge'], 'default', 'value' => 0],
-            [['member_name','loginpwd','paypwd','member_mobile'],'required','on'=>'Reg'],
-            [['member_mobile'],'unique','on'=>'Reg'],
-            [['member_mobile'],'unique','on'=>'Edit'],
+            [['sex', 'state_id'], 'default', 'value' => 1],
+            //正则验证器：
+            [['member_card_id'],'match','pattern'=>'/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/'],
+            [['member_name','member_card_id'],'required','on'=>'Reg'],
+            [['member_card_id'],'unique','on'=>'Reg'],
+            [['member_card_id'],'unique','on'=>'Edit'],
         ];
     }
     
@@ -33,15 +37,13 @@ class MemberModel extends BaseModel
     {
         return [
             'member_id' => '会员ID',
-            'member_name' => '会员姓名',  //微信开放平台ID unionid
-            'member_mobile' => '会员电话',  //微信openID 唯一标识
-            'loginpwd' => '登录密码',
-            'paypwd' => '支付密码',   // 默认微信昵称
+            'member_name' => '会员姓名',
+            'member_mobile' => '会员电话',
+            'member_card_id' => '身份证号',
             'auth_key' => '会员令牌',
             'invite_id' => '推荐人',
-            'openid' => '微信openid',
             'member_avatar' => '用户头像',
-            'state_id' => '用户状态',  //  1正常 0冻结
+            'state_id' => '用户状态',
             'create_time' => '创建时间',
             'update_time' => '更新时间',
         ];
@@ -83,17 +85,34 @@ class MemberModel extends BaseModel
     {
         return self::find()->select(['member_id','member_name'])
             ->from(['m' => self::tableName()])
-            ->leftJoin(RoomState::tableName().' rs','rs.state_id=m.state_id')
-            ->where(['m.state_id' => RoomState::getRoomStateId()])
+            ->leftJoin(RoomStateModel::tableName().' rs','rs.state_id=m.state_id')
+            ->where(['m.state_id' => RoomStateModel::getRoomStateId()])
             ->orWhere(['member_id'=>$id])
+            ->asArray()->all();
+    }
+
+    /*
+        获取所有未入住次会员
+    */
+    public static function getSecondMemberAll($id = 0)
+    {
+        return self::find()->select(['member_id','member_name'])
+            ->from(['m' => self::tableName()])
+            ->leftJoin(RoomStateModel::tableName().' rs','rs.state_id=m.state_id')
+            ->where(['m.state_id' => RoomStateModel::getRoomStateId()])
+            ->andWhere(['<>', 'member_id', $id])
             ->asArray()->all();
     }
 
     /*
         修改会员状态
     */
-    public static function setStateId($id,$stateId)
+    public static function setStateId($id,$stateId,$charge = '')
     {
-        self::updateAll(['state_id'=>$stateId],['member_id'=>$id]);
+        $fileds = ['state_id'=>$stateId];
+        if (!empty($charge)) {
+            $fileds['charge'] = $charge;
+        }
+        self::updateAll($fileds,['member_id'=>$id]);
     }
 }

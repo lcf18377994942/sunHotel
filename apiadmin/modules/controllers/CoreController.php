@@ -3,16 +3,14 @@ namespace apiadmin\modules\controllers;
 
 use Yii;
 use yii\rest\ActiveController;
-use yii\web\Response;
 use common\models\DB;
 use apiadmin\modules\models\admin\User;
-use common\utils\Model;
  
 
 /**
  * 接口基础处理
  * @author Administrator
- * @param  所有版本接口的控制器父类
+ * @param  接口的控制器父类
  */
 class CoreController extends ActiveController
 {
@@ -107,10 +105,11 @@ class CoreController extends ActiveController
     {
 
         $classDir  = 'apiadmin\\modules\\models'.'\\'.$model;
-        if(!is_dir($classDir)) {
-            $classDir = '\\common\\models\\'.$model;
-        }
         $m = new $classDir();
+        if(!$m) {
+            $classDir = '\\common\\models\\'.$model.'Model';
+            $m = new $classDir();
+        }
         if(!empty($id)) $m = $m::findOne($id);
 
         if(!$m) $this->error(' model cannot be blank.');

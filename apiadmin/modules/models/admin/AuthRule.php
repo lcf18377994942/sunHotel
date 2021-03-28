@@ -11,7 +11,7 @@ class AuthRule extends \yii\db\ActiveRecord
 
 	public static function tableName()
 	{
-		return "{{%fx_auth_rule}}";
+		return "{{%sh_auth_rule}}";
 	}
 
 	public function rules()

@@ -66,7 +66,7 @@
 				this.$post_('goods/goods/add_step2',this.form,(res) => {
 					console.log(res);
 					this.ifload = false;
-					if(res.code=='0'){
+					if(res.code ==='0'){
 						this.$message.success(res.msg);
 					}else{
 						this.$message.error(res.msg);

@@ -12,7 +12,7 @@ class Roles extends \yii\db\ActiveRecord
 
 	public static function tableName()
 	{
-		return "{{%fx_role}}";
+		return "{{%sh_role}}";
 	}
 
 	public function rules()

@@ -62,7 +62,7 @@
                         this.ifload = true;
                         post_('admin/connect/login',this.ruleForm,(res)=>{
                             console.log(res);
-                            if(res.code=='0'){
+                            if(res.code ==='0'){
                                 //设置路由
                                 window.sessionStorage.clear();
                                 window.localStorage.setItem('key',res.data.auth_key);

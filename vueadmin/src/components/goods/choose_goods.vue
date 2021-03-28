@@ -125,7 +125,7 @@ export default{
             }
 			this.$post_('goods/goods/goods_list',params,(res) => {
 				console.log(res);
-				if(res.code=='0'){
+				if(res.code ==='0'){
 					this.list = res.data;
 					this.pages = Number(res.extend.pages);
 					console.log(this.pages);
@@ -153,7 +153,7 @@ export default{
                 this.$post_('goods/goods/get_goods',params,(res) => {
                     console.log(res);
                     this.showPriceBox = !this.showPriceBox;
-                    if(res.code=='0'){
+                    if(res.code ==='0'){
                         this.curGoodsSku = res.data;
                     }
                 });

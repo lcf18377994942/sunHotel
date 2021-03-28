@@ -24,14 +24,31 @@
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <a href="https://github.com/FX336494/shopFX" target="_blank">
-                            <el-dropdown-item>项目仓库</el-dropdown-item>
-                        </a>
-                        <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
+                        <el-dropdown-item divided>信息修改</el-dropdown-item>
+                        <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>
         </div>
+
+        <!-- 编辑弹出框 -->
+        <el-dialog :title="'信息修改'" :visible.sync="editVisible" width="30%">
+            <el-form ref="form" :model="form" label-width="100px">
+                <el-form-item label="用户名">
+                    <el-input v-model="form.user_name"></el-input>
+                </el-form-item>
+                <el-form-item label="旧密码">
+                    <el-input type="password" v-model="form.old_pass"></el-input>
+                </el-form-item>
+                <el-form-item label="新密码">
+                    <el-input type="password" v-model="form.new_pass"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveEdit">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -43,10 +60,18 @@
                 fullscreen: false,
                 name: 'mxf',
                 userInfo:[],
+                editVisible:false,
+                form:{
+                    user_name:'',
+                    new_pass:'',
+                    old_pass:'',
+                    id:0,
+                },
             }
         },
         created() {
             this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            this.form.user_name = this.userInfo.user_name ? this.userInfo.user_name : this.name;
             console.log(this.userInfo);
         },
         computed:{
@@ -57,10 +82,12 @@
         methods:{
             // 用户名下拉菜单选择事件
             handleCommand(command) {
-                if(command == 'loginout'){
+                if(command === 'loginout'){
                     localStorage.clear();
                     sessionStorage.clear();
                     this.$router.replace('/login');
+                } else {
+                    this.showEdit();
                 }
             },
             // 侧边栏折叠
@@ -94,7 +121,25 @@
                     }
                 }
                 this.fullscreen = !this.fullscreen;
-            }
+            },
+            showEdit() {
+                this.editVisible = true;
+                this.form.new_pass = '';
+                this.form.old_pass = '';
+            },
+            saveEdit() {
+                this.$post_('admin/user/edit_info',this.form,(res)=>{
+                    if(res.code ==='0'){
+                        this.$message.success(res.msg);
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        this.$router.replace('/login');
+                    }else{
+                        this.$message.warning(res.msg);
+                    }
+                    this.editVisible= false;
+                })
+            },
         },
         mounted(){
             if(document.body.clientWidth < 1000){

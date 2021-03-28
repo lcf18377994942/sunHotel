@@ -1,9 +1,9 @@
 <?php
 namespace apiadmin\modules\controllers\room;
 use apiadmin\modules\controllers\CoreController;
-use common\models\room\RoomFloor;
-use common\models\room\RoomState;
-use common\models\room\RoomType;
+use common\models\room\RoomFloorModel;
+use common\models\room\RoomStateModel;
+use common\models\room\RoomTypeModel;
 use Yii;
 use common\utils\OutputExecl;
 use apiadmin\modules\models\room\Room;
@@ -34,9 +34,9 @@ class RoomController extends CoreController
     //获取房间下拉数据
     public function actionGetListAll()
     {
-        $list['room_type'] = RoomType::getRoomTypeAll();
-        $list['room_state'] = RoomState::getRoomStateAll();
-        $list['room_floor'] = RoomFloor::getRoomFloorAll();
+        $list['room_type'] = RoomTypeModel::getRoomTypeAll();
+        $list['room_state'] = RoomStateModel::getRoomStateAll();
+        $list['room_floor'] = RoomFloorModel::getRoomFloorAll();
         $this->out('类型状态',$list);
     }
 

@@ -8,7 +8,7 @@
                             <span><upload  @showImg="showImg" :size="100" :opacity="0"></upload></span>
                             <img :src="avatar?avatar:'static/img/img.jpg'" class="user-avator" alt="">
                         </div>
-                       
+
                         <div class="user-info-cont">
                             <div class="user-info-name">{{form.user_name}}</div>
                             <div>{{role}}</div>
@@ -25,13 +25,13 @@
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="用户名">
                     <el-input v-model="form.user_name"></el-input>
-                </el-form-item>              
+                </el-form-item>
                 <el-form-item label="旧密码">
                     <el-input type="password" v-model="form.old_pass"></el-input>
-                </el-form-item>  
+                </el-form-item>
                 <el-form-item label="新密码">
                     <el-input type="password" v-model="form.new_pass"></el-input>
-                </el-form-item>                               
+                </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -39,7 +39,7 @@
             </span>
         </el-dialog>
 
-        
+
 
 
     </div>
@@ -93,7 +93,7 @@
             saveEdit() {
                 // console.log(this.form);
                 this.$post_('admin/user/edit_info',this.form,(res)=>{
-                    if(res.code=='0'){
+                    if(res.code ==='0'){
                         this.$message.success(res.msg);
                     }else{
                         this.$message.warning(res.msg);
@@ -104,7 +104,7 @@
             showImg(imgUrl) {
                 console.log(imgUrl);
                 this.$post_('admin/user/edit_info',{avatar:imgUrl,id:this.form.id},(res)=>{
-                    if(res.code=='0'){
+                    if(res.code ==='0'){
                         this.avatar = imgUrl;
                         this.$message.success('修改成功');
                     }else{

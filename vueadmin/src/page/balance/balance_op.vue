@@ -77,7 +77,7 @@
                 let param = {};
                 this.$post_('finance/balance/balance_type',param,(res) => {
                     console.log(res);
-                    if(res.code=='0'){
+                    if(res.code==='0'){
                         this.typeNames = res.data;
                     }
                 })
@@ -88,7 +88,7 @@
                 let param = {member_key:this.memberKey};
                 this.$post_('member/member/query_member',param,(res) => {
                     console.log(res);
-                    if(res.code=='0' && res.data){
+                    if(res.code==='0' && res.data){
                         this.form.member_id = res.data.member_id;
                         this.form.member_name = res.data.member_name;
                         this.memberInfo = '姓名：'+res.data.member_name+'，ID:'+res.data.member_id;
@@ -107,7 +107,7 @@
                 this.$post_('finance/balance/balance_op',this.form,(res) =>{
                     console.log(res);
                     this.ifload = false;
-                    if(res.code=='0'){
+                    if(res.code==='0'){
                         this.$message.success(res.msg);
                         // this.$router.back(-1);
                         this.$emit('operateSuc');

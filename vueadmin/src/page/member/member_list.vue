@@ -10,36 +10,44 @@
 	 	<div class="container">
 
 			<div class="search">
-				<el-row type="flex"  justify="space-between">
-					<el-col :span="3">
-						<el-input v-model="search.member_id" placeholder="会员ID" clearable></el-input>
-					</el-col>
-					<el-col :span="3">
-						<el-input v-model="search.member_name" placeholder="会员姓名" clearable></el-input>
-					</el-col>
-					<el-col :span="3">
-						<el-input v-model="search.member_mobile" placeholder="会员电话" clearable></el-input>
-					</el-col>
-					<el-col :span="12">
-						<el-date-picker
-						  v-model="search.date"
-						  type="daterange"
-						  format="yyyy-MM-dd"
-						  range-separator="至"
-						  start-placeholder="会员注册开始日期"
-						  end-placeholder="会员注册结束日期">
-						</el-date-picker>
-					</el-col>
-				</el-row>
-				<el-row style="margin-top: 10px;">
-                    <el-col :span="2">
-                        <el-button type="success" icon="el-icon-plus" @click="addMember" >添加会员</el-button>
-                    </el-col>
-					<el-col :span="4" :offset='18'>
-						<el-button :loading="ifload" type="primary" @click="searchRes" icon="el-icon-search">搜索</el-button>
-						<el-button :loading="ifload" type="danger" @click="exportExecl" icon="el-icon-download">导出</el-button>
-					</el-col>
-				</el-row>
+                <el-form label-width="90px">
+                    <el-row :gutter="gutter">
+                        <el-col :span="4">
+                            <el-form-item label="会员ID：">
+                                <el-input v-model="search.member_id" placeholder="会员ID" clearable></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="4">
+                            <el-form-item label="会员姓名：">
+                                <el-input v-model="search.member_name" placeholder="会员姓名" clearable></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="4">
+                            <el-form-item label="会员电话：">
+                                <el-input v-model="search.member_mobile" placeholder="会员电话" clearable></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="注册时间：">
+                                <el-date-picker
+                                    v-model="search.date"
+                                    type="datetimerange"
+                                    align="right"
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期"
+                                    :default-time="['00:00:00', '23:59:59']">
+                                </el-date-picker>
+                                <el-button :loading="ifload" type="primary" @click="searchRes" icon="el-icon-search">搜索</el-button>
+                                <el-button :loading="ifload" type="danger" @click="exportExecl" icon="el-icon-download">导出</el-button>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row style="margin-top: 10px;">
+                        <el-col :span="2">
+                            <el-button type="success" icon="el-icon-plus" @click="addMember" >添加会员</el-button>
+                        </el-col>
+                    </el-row>
+                </el-form>
 			</div>
 
 			<el-table
@@ -71,7 +79,7 @@
                     align="center"
                     label="性别">
                     <template slot-scope="scope">
-                        <span>{{scope.row.sex=='1'?'男':'女'}}</span>
+                        <span>{{scope.row.sex==='1'?'男':'女'}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -87,7 +95,7 @@
                 <el-table-column
                     prop="charge"
                     align="center"
-                    label="状态">
+                    label="消费">
                 </el-table-column>
                 <el-table-column
                     prop="member_type_name"
@@ -120,7 +128,7 @@
                     align="center"
 					label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-document" @click="handleEidt(scope.row)">
+                        <el-button type="text" icon="el-icon-document" @click="handleEidt(scope.row.member_id)">
 						修改
 						</el-button>
                         <el-button type="text" icon="el-icon-delete" class="red" @click="handleDel(scope.$index, scope.row)">
@@ -151,18 +159,29 @@
                 <el-button :loading="ifload" type="primary" @click="delData">确 定</el-button>
             </span>
         </el-dialog>
+        <!-- 添加会员弹出框-->
+        <member_add ref="member_add" @callbackMember="callbackMember"></member_add>
+        <!-- 修改会员弹出框-->
+        <member_edit ref="member_edit" @callbackMember="callbackMember"></member_edit>
 
  	</div>
 </template>
 
 <script type="text/javascript">
 import {download} from '@/components/js/request'
+import member_add from "./member_add";
+import member_edit from "./member_edit";
 export default{
+    components:{
+        'member_add': member_add,
+        'member_edit': member_edit,
+    },
 	data() {
 		return {
 			ifload:true,
             avatarDefault:require("../../assets/avatar_default.png" ),
 			list:[],
+            gutter:24,
 
 			page:1,
 			page_size:10,
@@ -199,7 +218,7 @@ export default{
 			this.ifload = true;
 			this.$post_('member/member/member_list',params,(res) => {
 				console.log(res);
-				if(res.code=='0'){
+				if(res.code==='0'){
 					this.list = res.data;
 					this.pages = Number(res.extend.pages);
 					this.ifload = false;
@@ -217,12 +236,12 @@ export default{
             this.getData();
         },
         //修改
-		handleEidt(row) {
-            this.$router.push({path:'/page/member/member_edit',query:{member_id:row.member_id}});
+		handleEidt(member_id) {
+            this.$refs.member_edit.open(member_id);
 		},
         //新增
         addMember() {
-            this.$router.push({path:'/page/member/member_add'});
+            this.$refs.member_add.open();
         },
 
         //删除确认
@@ -237,7 +256,7 @@ export default{
 			let param = {member_id:this.curId};
 			this.$post_('member/member/member_del',param,(res) => {
 				console.log(res);
-				if(res.code=='0'){
+				if(res.code==='0'){
 					this.$message.success(res.msg);
 					this.list.splice(this.curIndex,1);
 					this.ifload = false;
@@ -262,12 +281,15 @@ export default{
 			}
 			this.$post_('member/member/export',params,(res) => {
 				console.log(res);
-				if(res.code=='0'){
+				if(res.code==='0'){
 					download(res.data.url);
 				}
                 this.ifload = false;
 			})
-		}
+		},
+        callbackMember() {
+		    this.getData();
+        }
 
 	}
 }

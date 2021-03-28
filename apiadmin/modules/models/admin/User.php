@@ -13,7 +13,7 @@ class User extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%fx_user}}';
+        return '{{%sh_user}}';
     }
 
     public function rules()

@@ -3,10 +3,10 @@
 	房间相关
 */
 namespace apiadmin\modules\models\room;
-use common\models\room\Room as RoomModel;
-use common\models\room\RoomFloor;
-use common\models\room\RoomState;
-use common\models\room\RoomType;
+use common\models\room\RoomModel;
+use common\models\room\RoomFloorModel;
+use common\models\room\RoomStateModel;
+use common\models\room\RoomTypeModel;
 
 class Room extends RoomModel
 {
@@ -19,9 +19,9 @@ class Room extends RoomModel
     public static function RoomList($whereArr,$params)
     {
         $model  = self::find()->from(['r'=>self::tableName()])
-            ->leftJoin(RoomState::tableName().' rs','rs.state_id=r.state_id')
-            ->leftJoin(RoomType::tableName().' rt','rt.type_id=r.type_id')
-            ->leftJoin(RoomFloor::tableName().' rf','rf.floor_id=r.floor_id');
+            ->leftJoin(RoomStateModel::tableName().' rs','rs.state_id=r.state_id')
+            ->leftJoin(RoomTypeModel::tableName().' rt','rt.type_id=r.type_id')
+            ->leftJoin(RoomFloorModel::tableName().' rf','rf.floor_id=r.floor_id');
 
         return self::getlist($model,$whereArr,$params);
     }
