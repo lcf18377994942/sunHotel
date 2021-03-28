@@ -121,6 +121,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    show-overflow-tooltip
                     prop="mark"
                     align="center"
                     label="备注"

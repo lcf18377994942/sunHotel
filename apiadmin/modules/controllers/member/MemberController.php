@@ -153,7 +153,7 @@ class MemberController extends CoreController
 	{
 		$where  = $this->formartWhere();
 		$params = array(
-			'field'	=> ['member_id','member_name','member_mobile','invite_id','state_id',
+			'field'	=> ['member_id','member_name','member_mobile','state_id',
 			'create_time','update_time'],
 			'order' => 'member_id desc',
 			'page'	=> $this->request('page','1'),

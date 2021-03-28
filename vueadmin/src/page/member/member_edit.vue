@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         :before-close="handleClose"
-        title="会员入住"
+        title="修改会员"
         :visible.sync="dialogVisible"
         width="40%">
         <el-form ref="form" :model="form" label-width="100px">

@@ -46,9 +46,9 @@
                     </el-row>
                     <el-row style="margin-top: 20px;">
                         <el-col>
-                            <el-button type="primary" icon="el-icon-plus" @click="addRoom" >添加房间</el-button>
-                            <el-button type="primary" icon="el-icon-plus" @click="addBasics" >添加房间配置</el-button>
-                            <el-button type="primary" icon="el-icon-plus" @click="editBasics" >修改房间配置</el-button>
+                            <el-button type="success" icon="el-icon-plus" @click="addRoom" >添加房间</el-button>
+                            <el-button type="success" icon="el-icon-plus" @click="addBasics" >添加配置</el-button>
+                            <el-button type="success" icon="el-icon-plus" @click="editBasics" >修改配置</el-button>
                         </el-col>
                     </el-row>
                 </el-form>
@@ -90,6 +90,7 @@
 					label="楼层">
 				</el-table-column>
                 <el-table-column
+                    show-overflow-tooltip
                     prop="mark"
                     align="center"
                     label="备注"

@@ -120,7 +120,7 @@
 				<el-table-column
 					prop="in_time"
                     align="center"
-					label="退房时间">
+					label="入住时间">
 					<template slot-scope="scope">
 						<span>{{scope.row.in_time*1000 | formatDate}}</span>
 					</template>
@@ -134,10 +134,10 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    show-overflow-tooltip
                     prop="mark"
                     align="center"
-                    label="备注"
-                    width="120">
+                    label="备注">
                 </el-table-column>
 			</el-table>
 
